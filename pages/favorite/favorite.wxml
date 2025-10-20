@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="header">
+    <text class="title">收藏商品</text>
+  </view>
+
+  <view class="product-grid" wx:if="{{favorites.length > 0}}">
+    <view class="product-card" wx:for="{{favorites}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+      <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <view class="product-footer">
+          <text class="product-price">¥{{item.price}}</text>
+          <view class="cancel-btn" catchtap="onCancelFavorite" data-id="{{item.id}}">
+            <image class="cancel-icon" src="/images/favorite-active.svg"/>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && favorites.length === 0}}">
+    <image class="empty-image" src="/images/empty-order.svg" />
+    <text class="empty-text">您还没有收藏任何商品</text>
+    <navigator url="/pages/index/index" open-type="switchTab" class="go-shopping-btn">
+      去逛逛
+    </navigator>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

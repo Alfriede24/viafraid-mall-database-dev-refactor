@@ -1,0 +1,27 @@
+<view class="container">
+  <view class="header">
+    <text class="title">帮助与客服</text>
+  </view>
+
+  <view class="faq-section">
+    <view class="faq-header">常见问题</view>
+    <view class="faq-list">
+      <view class="faq-item" wx:for="{{faqList}}" wx:key="id">
+        <view class="question-row" bindtap="toggleFaq" data-index="{{index}}">
+          <text class="question-text">{{item.question}}</text>
+          <text class="arrow {{activeIndex === index ? 'expanded' : ''}}">></text>
+        </view>
+        <view class="answer-row {{activeIndex === index ? 'show' : ''}}">
+          <text class="answer-text">{{item.answer}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="contact-btn-container">
+  <view class="contact-btn" bindtap="contactService">
+    <image class="btn-icon" src="/images/phone-icon.svg" />
+    <text>联系人工客服</text>
+  </view>
+</view>

@@ -1,0 +1,388 @@
+/* pages/logistics/logistics.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 20rpx;
+}
+
+/* 搜索区域 */
+.search-section {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.picker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.arrow {
+  color: #999;
+  font-size: 24rpx;
+}
+
+.input {
+  flex: 1;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  text-align: center;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  margin-top: 20rpx;
+}
+
+.search-btn:active {
+  opacity: 0.8;
+}
+
+/* 物流信息 */
+.logistics-info {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+}
+
+.info-header {
+  border-bottom: 1rpx solid #eee;
+  padding-bottom: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.status {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #07c160;
+}
+
+.company {
+  font-size: 28rpx;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.tracking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.tracking-no {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.update-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.recipient-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+}
+
+.info-row .label {
+  font-size: 28rpx;
+  color: #666;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* 物流轨迹 */
+.logistics-track {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.track-header {
+  padding: 30rpx 30rpx 20rpx;
+  border-bottom: 1rpx solid #eee;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.track-list {
+  padding: 20rpx 30rpx 30rpx;
+}
+
+.track-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  position: relative;
+}
+
+.track-dot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: #ddd;
+  margin-top: 10rpx;
+}
+
+.track-dot.active .dot {
+  background-color: #07c160;
+  box-shadow: 0 0 0 6rpx rgba(7, 193, 96, 0.2);
+}
+
+.line {
+  width: 2rpx;
+  height: 80rpx;
+  background-color: #eee;
+  margin-top: 10rpx;
+}
+
+.track-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding-bottom: 30rpx;
+}
+
+.track-desc {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.track-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.track-location {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 使用说明 */
+.help-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.help-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.help-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.help-content text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.help-content text::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #07c160;
+  font-weight: bold;
+}
+
+/* 在现有样式基础上添加以下样式 */
+
+/* 操作按钮区域 */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 20rpx 0;
+  padding: 0 30rpx;
+}
+
+.detail-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24rpx 60rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.detail-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.4);
+}
+
+/* 优化加载状态 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 优化空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 30rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  font-weight: 500;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  line-height: 1.5;
+}

@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="tabs-container">
+    <view class="tab-item {{activeTab === index ? 'active' : ''}}" 
+          wx:for="{{tabs}}" 
+          wx:key="index"
+          bindtap="onTabClick" 
+          data-index="{{index}}">
+      {{item}}
+    </view>
+  </view>
+
+  <view class="coupon-list" wx:if="{{coupons.length > 0}}">
+    <view class="coupon-card {{item.status === 'used' || item.status === 'expired' ? 'disabled' : ''}}" wx:for="{{coupons}}" wx:key="id">
+      <view class="card-left">
+        <text class="value-symbol">¥</text>
+        <text class="value">{{item.value}}</text>
+      </view>
+      <view class="card-main">
+        <text class="coupon-name">{{item.name}}</text>
+        <text class="coupon-desc">{{item.description}}</text>
+        <text class="valid-period">有效期至 {{item.validPeriod}}</text>
+      </view>
+      <view class="card-right">
+        <view class="use-btn" wx:if="{{item.status === 'unused'}}">去使用</view>
+        <image class="status-stamp" wx:if="{{item.status === 'used'}}" src="/images/order-completed.svg" />
+        <image class="status-stamp" wx:if="{{item.status === 'expired'}}" src="/images/order-cancelled.svg" />
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && coupons.length === 0}}">
+    <image class="empty-image" src="/images/coupon.svg" />
+    <text class="empty-text">暂无此类优惠券</text>
+    <navigator url="/pages/coupon/get/get" class="get-coupon-btn">去领券中心</navigator>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

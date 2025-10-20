@@ -1,0 +1,73 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="header">
+    <view class="logo">
+      <image src="/images/logo.png" mode="aspectFit" />
+    </view>
+    <text class="app-name">微信商城</text>
+    <text class="welcome-text">欢迎来到微信商城</text>
+  </view>
+
+  <!-- 登录表单 -->
+  <view class="login-form">
+    <!-- 微信登录 -->
+    <button class="login-btn wechat-btn" 
+            bindtap="onWechatLogin" 
+            disabled="{{loading}}">
+      <image class="btn-icon" src="/images/wechat-icon.png" wx:if="{{!loading}}" />
+      <text wx:if="{{!loading}}">微信快速登录</text>
+      <text wx:if="{{loading}}">登录中...</text>
+    </button>
+
+    <!-- 账号密码登录 -->
+    <button class="login-btn phone-btn" bindtap="openPhoneLogin">账号密码登录</button>
+  </view>
+
+  <!-- 用户信息展示（已登录状态） -->
+  <view class="user-info" wx:if="{{hasUserInfo}}">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" />
+    <text class="nickname">{{userInfo.nickName}}</text>
+    <text class="login-success">登录成功！正在跳转...</text>
+  </view>
+
+  <!-- 协议条款 -->
+  <view class="agreement">
+    <text class="agreement-text">登录即表示同意</text>
+    <text class="agreement-link" bindtap="onUserAgreement">《用户协议》</text>
+    <text class="agreement-text">和</text>
+    <text class="agreement-link" bindtap="onPrivacyPolicy">《隐私政策》</text>
+  </view>
+
+  <!-- 底部装饰 -->
+  <view class="footer">
+    <text class="footer-text">安全 · 便捷 · 可信赖</text>
+  </view>
+
+  <!-- 手机号/账号登录弹窗 -->
+  <view class="phone-login-modal" wx:if="{{showPhoneModal}}">
+    <view class="modal-mask" bindtap="closePhoneLogin"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">账号登录</text>
+        <view class="close-btn" bindtap="closePhoneLogin">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="input-group">
+          <text class="input-label">账号</text>
+          <input class="input-field" placeholder="请输入账号" value="{{username}}" bindinput="onUsernameInput" />
+        </view>
+        <view class="input-group">
+          <text class="input-label">密码</text>
+          <input class="input-field" placeholder="请输入密码" password value="{{password}}" bindinput="onPasswordInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="login-submit-btn {{submitLoading ? 'loading' : ''}}" bindtap="onSubmitAccountLogin" disabled="{{submitLoading}}">
+          <text wx:if="{{!submitLoading}}">登录</text>
+          <text wx:if="{{submitLoading}}">登录中...</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

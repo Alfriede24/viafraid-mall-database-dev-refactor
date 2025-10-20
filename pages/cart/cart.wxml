@@ -1,0 +1,87 @@
+<view class="container">
+  <block wx:if="{{!loading && cartItems.length > 0}}">
+    <view class="cart-header">
+      <text class="title">购物车</text>
+    </view>
+    <view class="top-notice">
+      <text>如需退换货，请先提交退换货申请，否则可能将影响退货时效。</text>
+    </view>
+    <view class="cart-list">
+      <view class="cart-item" wx:for="{{cartItems}}" wx:key="cartId">
+        <view class="checkbox {{item.selected ? 'selected' : ''}}" bindtap="onSelectItem" data-index="{{index}}">
+          <text wx:if="{{item.selected}}">✓</text>
+        </view>
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-spec">颜色 {{item.color}}</text>
+          <text class="product-spec">尺码 {{item.size}} {{item.quantity}}件</text>
+        </view>
+        <view class="price-section">
+          <text class="delete-action" catchtap="onDeleteItem" data-index="{{index}}">删除</text>
+          <text class="product-price">¥{{item.price}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="summary-section">
+      <view class="summary-row">
+        <text>实际商品总额</text>
+        <text>¥{{totalPrice}}</text>
+      </view>
+      <view class="summary-row">
+        <text>实际支付运费</text>
+        <text class="free">免费</text>
+      </view>
+      <view class="summary-row total">
+        <text>总计</text>
+        <text>¥{{totalPrice}}</text>
+      </view>
+    </view>
+  </block>
+  
+  <view class="empty-cart" wx:if="{{!loading && cartItems.length === 0}}">
+    <view class="header">
+      <text class="title">购物车</text>
+      <text class="subtitle">你可以将喜欢的商品加入购物车</text>
+    </view>
+    <view class="empty-content">
+      <image class="empty-icon" src="/images/package.svg" />
+      <text class="empty-text">购物车是空的</text>
+      <text class="empty-subtext">快去商城浏览最新商品吧</text>
+      <navigator url="/pages/index/index" class="go-shopping-btn" open-type="switchTab">去商城选购</navigator>
+    </view>
+  </view>
+
+  <view class="recommend-section">
+    <text class="recommend-title">热销好货</text>
+    <view class="recommend-grid">
+      <view class="product-item-rec" wx:for="{{recommendedProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+        <image class="product-image-rec" src="{{item.image}}" mode="aspectFill" />
+        <text class="product-name-rec">{{item.name}}</text>
+        <text class="product-price-rec">¥{{item.price}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="loading" wx:if="{{loading}}"><text>加载中...</text></view>
+</view>
+
+<view class="checkout-bar" wx:if="{{cartItems.length > 0 && hasSelectedItems}}">
+  <view class="bar-left">
+    <view class="select-all" bindtap="onSelectAll">
+      <view class="checkbox {{selectedAll ? 'selected' : ''}}">
+        <text wx:if="{{selectedAll}}">✓</text>
+      </view>
+      <text>全选</text>
+    </view>
+    <view class="coupon-btn" bindtap="onCouponTap">
+      <image src="/images/coupon.svg" class="coupon-icon"/>
+      <text>优惠券</text>
+    </view>
+  </view>
+  <view class="checkout-btn" bindtap="onCheckout">
+    <view class="total-container">
+      <text class="total-amount">¥{{totalPrice}}</text>
+      <text class="checkout-text">结算</text>
+    </view>
+  </view>
+</view>

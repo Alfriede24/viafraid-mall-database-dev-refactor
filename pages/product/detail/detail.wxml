@@ -1,0 +1,52 @@
+<view class="container">
+  <swiper class="product-swiper" indicator-dots="true" indicator-color="rgba(255, 255, 255, .5)" indicator-active-color="#fff" autoplay="true" circular="true">
+    <swiper-item wx:for="{{product.images}}" wx:key="index">
+      <image class="swiper-image" src="{{item}}" mode="aspectFill" bindtap="onImageTap" data-index="{{index}}"/>
+    </swiper-item>
+  </swiper>
+
+  <view class="info-section">
+    <view class="price-row">
+      <text class="price">¥{{product.price}}</text>
+      <view class="actions">
+        <image class="action-icon" src="/images/share.svg" bindtap="onShareAppMessage"/>
+        <image class="action-icon" src="/images/favorite.png" bindtap="onToggleFavorite"/>
+      </view>
+    </view>
+    <text class="name">{{product.name}}</text>
+    <text class="description">{{product.description}}</text>
+  </view>
+
+  <view class="spec-section">
+    <view class="spec-group" wx:for="{{product.specs}}" wx:key="name" wx:for-item="spec">
+      <text class="spec-name">{{spec.name}}</text>
+      <view class="option-list">
+        <view class="option-item {{selectedSpec[spec.name] === option ? 'active' : ''}}"
+              wx:for="{{spec.options}}" wx:key="*this" wx:for-item="option"
+              bindtap="onSpecTap" data-spec-name="{{spec.name}}" data-option="{{option}}">
+          {{option}}
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="quantity-section">
+    <text class="label">数量</text>
+    <view class="quantity-control">
+      <view class="quantity-btn" bindtap="onQuantityChange" data-type="minus">-</view>
+      <text class="quantity">{{quantity}}</text>
+      <view class="quantity-btn" bindtap="onQuantityChange" data-type="plus">+</view>
+    </view>
+  </view>
+
+  <view class="detail-images-section">
+    <view class="section-title">商品详情</view>
+    <image class="detail-image" wx:for="{{product.images}}" wx:key="index" src="{{item}}" mode="widthFix"/>
+  </view>
+
+</view>
+
+<view class="bottom-bar">
+  <view class="cart-btn" bindtap="onAddToCart">加入购物车</view>
+  <view class="buy-btn" bindtap="onBuyNow">立即购买</view>
+</view>

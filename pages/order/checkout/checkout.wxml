@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="address-box" bindtap="selectAddress">
+    <view class="address-info" wx:if="{{shippingAddress}}">
+      <view class="user-info">
+        <text class="name">{{shippingAddress.name}}</text>
+        <text class="phone">{{shippingAddress.phone}}</text>
+      </view>
+      <text class="address">{{shippingAddress.address}}</text>
+    </view>
+    <view class="no-address" wx:else>
+      <text>请选择收货地址</text>
+    </view>
+  </view>
+
+  <view class="product-list">
+    <view class="product-item" wx:for="{{orderItems}}" wx:key="id">
+      <image class="product-image" src="{{item.image}}" />
+      <view class="product-info">
+        <text class="name">{{item.name}}</text>
+        <text class="price">¥{{item.price}}</text>
+      </view>
+      <text class="quantity">x{{item.quantity}}</text>
+    </view>
+  </view>
+
+  <view class="summary-box">
+    <view class="summary-item">
+      <text>商品总额</text>
+      <text>¥{{totalAmount}}</text>
+    </view>
+    <view class="summary-item">
+      <text>运费</text>
+      <text>¥0.00</text>
+    </view>
+  </view>
+
+  <view class="checkout-bar">
+    <text class="total">合计: ¥{{totalAmount}}</text>
+    <view class="submit-btn" bindtap="onSubmitOrder">提交订单</view>
+  </view>
+</view>

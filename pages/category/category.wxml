@@ -1,0 +1,70 @@
+<view class="page-container">
+  <view class="main-category-tabs">
+    <view
+      class="tab-item {{ currentMainCategory === item.id ? 'active' : '' }}"
+      wx:for="{{ mainCategories }}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onMainCategoryTap">
+      {{item.name}}
+    </view>
+  </view>
+
+  <view class="content-wrapper">
+    <scroll-view class="left-sidebar" scroll-y="true">
+      <view
+        class="sidebar-item {{ currentSubCategory === item.id ? 'active' : '' }}"
+        wx:for="{{ subCategories }}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onSubCategoryTap">
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <scroll-view class="right-content" scroll-y="true">
+
+      <view wx:if="{{ currentSubCategory === 'hot' && !currentSeries }}">
+        <view class="selection-grid">
+          <view class="selection-item" wx:for="{{ hotSeriesList }}" wx:key="id" data-series="{{item}}" bindtap="onSeriesTap">
+            <image class="selection-image" src="{{item.image}}" mode="aspectFill"></image>
+            <view class="selection-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:elif="{{ currentSubCategory === 'brands' && !currentBrand }}">
+        <view class="selection-grid">
+          <view class="selection-item" wx:for="{{ brandsList }}" wx:key="id" data-brand="{{item}}" bindtap="onBrandTap">
+            <image class="selection-image" src="{{item.image}}" mode="aspectFill"></image>
+            <view class="selection-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:else>
+        <view class="subtitle-wrapper" wx:if="{{ currentSubCategory === 'hot' && currentSeries }}">
+          <text class="back-button" bindtap="backToList">返回</text>
+          <text class="subtitle-text">{{ currentSeries.name }}</text>
+        </view>
+        <view class="subtitle-wrapper" wx:if="{{ currentSubCategory === 'brands' && currentBrand }}">
+          <text class="back-button" bindtap="backToList">返回</text>
+          <text class="subtitle-text">{{ currentBrand.name }}</text>
+        </view>
+
+        <view class="product-grid">
+          <view class="product-item" wx:for="{{ productList }}" wx:key="id">
+            <image class="product-image" src="{{item.picUrl}}" mode="aspectFill"></image>
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-price">¥{{item.minPrice}}</view>
+          </view>
+        </view>
+
+        <view class="empty-state" wx:if="{{ productList.length === 0 }}">
+          <text>該分類下暫無商品</text>
+        </view>
+      </view>
+
+    </scroll-view>
+  </view>
+</view>

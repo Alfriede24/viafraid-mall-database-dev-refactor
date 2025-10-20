@@ -1,0 +1,39 @@
+<view class="container">
+  <view class="header">
+    <text class="title">会员积分</text>
+  </view>
+
+  <view class="points-card">
+    <text class="card-label">当前可用积分</text>
+    <text class="card-value">{{totalPoints}}</text>
+    <view class="card-actions">
+      <view class="action-btn">积分兑换</view>
+      <view class="action-btn inactive">赚取积分</view>
+    </view>
+  </view>
+
+  <view class="history-section">
+    <view class="history-header">积分明细</view>
+    <view class="history-list" wx:if="{{history.length > 0}}">
+      <view class="history-item" wx:for="{{history}}" wx:key="index">
+        <view class="item-left">
+          <text class="description">{{item.description}}</text>
+          <text class="time">{{item.createdAt}}</text>
+        </view>
+        <view class="item-right">
+          <text class="points {{item.points > 0 ? 'increase' : 'decrease'}}">
+            {{item.points > 0 ? '+' : ''}}{{item.points}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>
+      <text>暂无积分记录</text>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

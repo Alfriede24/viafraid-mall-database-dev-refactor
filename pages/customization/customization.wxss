@@ -1,0 +1,87 @@
+/* pages/customization/customization.wxss */
+page {
+  height: 100%;
+  overflow: hidden;
+}
+.container {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.bg-image, .bg-mask {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+}
+.bg-mask {
+  background-color: rgba(0,0,0,0.4); z-index: 2;
+}
+.preview-area {
+  height: 45vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 3;
+}
+.shoe-container {
+  position: relative; width: 550rpx; height: 550rpx;
+}
+/* 核心修改：所有图层都是绝对定位的图片 */
+.base-shoe, .part-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.pid-preview {
+  position: absolute; bottom: 25%; left: 15%;
+  transform: skewX(-15deg); font-size: 40rpx; font-weight: bold;
+  color: #fff; text-shadow: 0 0 5rpx #000;
+}
+.controls-scroll {
+  height: 55vh;
+  position: relative; z-index: 3;
+}
+.controls-area {
+  background-color: #fff;
+  border-top-left-radius: 40rpx; border-top-right-radius: 40rpx;
+  padding: 30rpx; padding-bottom: 200rpx;
+}
+.parts-nav {
+  white-space: nowrap; border-bottom: 1rpx solid #f0f0f0; padding-bottom: 20rpx;
+}
+.part-item {
+  display: inline-block; font-size: 28rpx; padding: 10rpx 30rpx;
+  margin-right: 20rpx; border-radius: 30rpx; background-color: #f5f5f5; color: #555;
+}
+.part-item.active { background-color: #111; color: #fff; font-weight: bold; }
+.options-panel { padding-top: 30rpx; }
+.options-group { margin-bottom: 40rpx; }
+.group-title { display: block; font-size: 26rpx; color: #888; margin-bottom: 20rpx; }
+.option-list { display: flex; flex-wrap: wrap; gap: 30rpx; }
+.option-item { text-align: center; }
+.color-swatch {
+  width: 80rpx; height: 80rpx; border-radius: 50%;
+  border: 4rpx solid #fff; box-shadow: 0 0 10rpx rgba(0,0,0,0.1);
+}
+.option-item.active .color-swatch { border-color: #111; }
+.option-name { font-size: 24rpx; margin-top: 10rpx; }
+.material-item {
+  border: 1rpx solid #ccc; border-radius: 8rpx; padding: 15rpx 30rpx; font-size: 26rpx;
+}
+.material-item.active { background-color: #111; color: #fff; border-color: #111; }
+.pid-input {
+  border: 1rpx solid #ddd; border-radius: 8rpx; padding: 20rpx;
+  font-size: 32rpx; text-align: center;
+}
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  background-color: #fff;
+  padding: 20rpx 30rpx; padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid #f0f0f0; z-index: 100;
+}
+.price-label { font-size: 24rpx; color: #888; }
+.price-value { font-size: 40rpx; font-weight: bold; }
+.add-to-cart-btn {
+  background-color: #111; color: #fff; font-size: 30rpx; font-weight: bold;
+  padding: 24rpx 80rpx; border-radius: 50rpx;
+}

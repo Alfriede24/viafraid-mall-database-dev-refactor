@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechatmall.api.dao.UserOrderMapper">
+    <resultMap id="AddressMap" type="com.wechatmall.api.pojo.entity.Address">
+        <id property="id" column="id"/>
+        <result property="hasAddress" column="has_address"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="town" column="town"/>
+        <result property="mainAddress" column="main_address"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <resultMap id="ExpressMap" type="com.wechatmall.api.pojo.entity.Express">
+        <id property="id" column="id"/>
+        <result property="expressCode" column="express_code"/>
+        <result property="orderId" column="order_id"/>
+        <result property="state" column="state"/>
+        <result property="addressId" column="address_id"/>
+        <result property="expressUrl" column="express_url"/>
+    </resultMap>
+    <resultMap id="ProductMap" type="com.wechatmall.api.pojo.entity.Product">
+        <id property="id" column="id"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="salesCount" column="sales_count"/>
+        <result property="storeCount" column="store_count"/>
+        <result property="price" column="price"/>
+        <result property="originPrice" column="originPrice"/>
+        <result property="typeId" column="type_id"/>
+    </resultMap>
+    <resultMap id="OrderMap" type="com.wechatmall.api.pojo.vo.OrdersVo">
+      <id property="id" column="id"/>
+      <result property="userId" column="user_id"/>
+      <result property="amountCount" column="amount_count"/>
+      <result property="shipping" column="shipping"/>
+      <result property="state" column="state"/>
+      <result property="createTime" column="create_time"/>
+      <result property="paymentTime" column="payment_time"/>
+      <result property="paymentState" column="payment_state"/>
+      <association property="address"  column="address_id" resultMap="AddressMap"/>
+      <association property="express"  column="express_id" resultMap="ExpressMap"/>
+      <association property="product"  column="product_id" resultMap="ProductMap"/>
+    </resultMap>
+    <resultMap id="UserOrderMap" type="com.wechatmall.api.pojo.vo.UserOrderVo">
+         <id property="id" column="id"/>
+         <result property="isPay" column="is_pay"/>
+         <result property="imageUrl" column="image_url"/>
+         <result property="description" column="description"/>
+         <result property="username" column="username"/>
+         <result property="createTime" column="create_time"/>
+         <result property="updateTime" column="update_time"/>
+         <collection property="orders" javaType="java.util.List" resultMap="OrderMap" column="order_id"/>
+    </resultMap>
+    <select id="selectUserOrderByUserId" resultMap="UserOrderMap" >
+        SELECT * FROM user_order AS  uo
+        LEFT JOIN orders AS o
+                ON   uo.order_id=o.id
+        LEFT JOIN address AS a
+                ON o.address_id = a.Id
+        LEFT JOIN product AS p
+                ON o.product_id = p.id
+        LEFT JOIN express AS e
+                ON o.express_id = e.id
+        WHERE uo.user_id=#{userId}
+    </select>
+</mapper>

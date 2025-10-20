@@ -1,0 +1,101 @@
+/* pages/points/list/list.wxss */
+page {
+  background-color: #f5f5f5;
+}
+.container {
+  padding: 40rpx 30rpx;
+}
+.header {
+  margin-bottom: 20rpx;
+}
+.title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #111;
+}
+
+/* 积分卡片 */
+.points-card {
+  background-color: #111;
+  color: #fff;
+  padding: 40rpx;
+  border-radius: 20rpx;
+  margin-bottom: 40rpx;
+}
+.card-label {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.7;
+}
+.card-value {
+  display: block;
+  font-size: 72rpx;
+  font-weight: bold;
+  margin-top: 10rpx;
+}
+.card-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 30rpx;
+}
+.action-btn {
+  background-color: #fff;
+  color: #111;
+  padding: 12rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+.action-btn.inactive {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* 积分明细 */
+.history-section {
+  background-color: #fff;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+.history-header {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 0;
+}
+.item-left {
+  display: flex;
+  flex-direction: column;
+}
+.description {
+  font-size: 28rpx;
+  color: #333;
+}
+.time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+.points {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.increase {
+  color: #111; /* 增加的积分用黑色 */
+}
+.decrease {
+  color: #555; /* 减少的积分用深灰色 */
+}
+.empty-state, .loading {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999;
+}

@@ -1,0 +1,66 @@
+<view class="container">
+  <image class="bg-image" src="{{backgroundImage}}" mode="aspectFill"/>
+  <view class="bg-mask"></view>
+
+  <view class="preview-area">
+    <view class="shoe-container">
+      <image class="base-shoe" src="{{baseShoe.baseImage}}" mode="widthFix"/>
+      
+      <image class="part-image" src="{{currentSelections.upper.image}}"/>
+      <image class="part-image" src="{{currentSelections.sole.image}}"/>
+      <image class="part-image" src="{{currentSelections.logo.image}}"/>
+      
+      <text class="pid-preview" wx:if="{{personalId}}">{{personalId}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="controls-scroll" scroll-y="true">
+    <view class="controls-area">
+      <scroll-view class="parts-nav" scroll-x="true">
+        <view class="part-item {{activePartKey === item.key ? 'active' : ''}}"
+              wx:for="{{parts}}" wx:key="key"
+              bindtap="switchPart" data-key="{{item.key}}">
+          {{item.name}}
+        </view>
+      </scroll-view>
+
+      <view class="options-panel">
+        <view class="options-group" wx:if="{{activePartOptions.colors}}">
+          <text class="group-title">颜色</text>
+          <view class="option-list">
+            <view class="option-item {{currentSelections[activePartKey].colorName === option.name ? 'active' : ''}}"
+                  wx:for="{{activePartOptions.colors}}" wx:key="name" wx:for-item="option"
+                  bindtap="selectOption" data-type="color" data-option="{{option}}">
+              <view class="color-swatch" style="background-color: {{option.color}};"></view>
+              <text class="option-name">{{option.name}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="options-group" wx:if="{{activePartOptions.materials}}">
+          <text class="group-title">材质</text>
+          <view class="option-list">
+             <view class="material-item {{currentSelections[activePartKey].material === option.name ? 'active' : ''}}"
+                  wx:for="{{activePartOptions.materials}}" wx:key="name" wx:for-item="option"
+                  bindtap="selectOption" data-type="material" data-option="{{option}}">
+              {{option.name}}
+            </view>
+          </view>
+        </view>
+        <view class="options-group" wx:if="{{activePartKey === 'pid'}}">
+          <text class="group-title">输入签名 (最多6个字符)</text>
+          <input class="pid-input" value="{{personalId}}" bindinput="onIdInput" maxlength="6" placeholder="输入你的个性签名"/>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="price-info">
+      <text class="price-label">定制价</text>
+      <text class="price-value">¥{{totalPrice}}</text>
+    </view>
+    <view class="add-to-cart-btn" bindtap="addToCart">
+      下单
+    </view>
+  </view>
+</view>

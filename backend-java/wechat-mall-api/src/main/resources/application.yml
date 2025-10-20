@@ -1,0 +1,28 @@
+server:
+  servlet:
+    context-path: /api
+  port: 8080
+spring:
+  profiles:
+    active: dev
+#  application:
+#    name: wechat-mall-api
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: 1234
+#    url: jdbc:mysql://192.168.100.101:3307/wechat_mall?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    type: com.alibaba.druid.pool.DruidDataSource
+knife4j:
+  enable: true
+  setting:
+    language: zh-CN
+jwt:
+  secret: wechat-mall-secret-key-2024
+  expiration: 86400000
+  prefix: Bearer
+  issuer: Wechatmall
+  header: Authorization
+wechat:
+  app-secret: 密钥
+  app-id: id

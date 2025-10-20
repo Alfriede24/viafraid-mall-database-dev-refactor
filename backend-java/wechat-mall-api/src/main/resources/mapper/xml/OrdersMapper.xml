@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechatmall.api.dao.OrdersMapper">
+
+    <select id="selectOrderByUserId" resultMap="com.wechatmall.api.dao.UserOrderMapper.OrderMap" >
+      SELECT * FROM orders AS o
+      LEFT JOIN address AS a
+                ON o.address_id = a.Id
+      LEFT JOIN product AS p
+                ON o.product_id = p.id
+      LEFT JOIN express AS e
+                ON o.express_id = e.id
+        WHERE o.user_id=#{userId}
+    </select>
+    <select id="selectOrderVoList" resultMap="com.wechatmall.api.dao.UserOrderMapper.OrderMap">
+        SELECT * FROM orders AS o
+        LEFT JOIN address AS a
+            ON o.address_id = a.Id
+        LEFT JOIN product AS p
+            ON o.product_id = p.id
+        LEFT JOIN express AS e
+            ON o.express_id = e.id
+        <where>
+            ${ew.SqlSegment}
+        </where>
+    </select>
+
+    <select id="selectOrderVoPage" resultMap="com.wechatmall.api.dao.UserOrderMapper.OrderMap">
+        SELECT * FROM orders AS o
+        LEFT JOIN address AS a
+        ON o.address_id = a.Id
+        LEFT JOIN product AS p
+        ON o.product_id = p.id
+        LEFT JOIN express AS e
+        ON o.express_id = e.id
+        <where>
+            ${ew.SqlSegment}
+        </where>
+    </select>
+
+</mapper>

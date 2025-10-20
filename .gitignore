@@ -1,0 +1,91 @@
+# Git忽略文件配置
+# 用于微信小程序商城项目的版本控制
+
+# ===== IDE和编辑器配置 =====
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== Java后端相关 =====
+# Maven编译产物
+backend-java/wechat-mall-api/target/
+backend-java/wechat-mall-api/.mvn/
+backend-java/wechat-mall-api/mvnw
+backend-java/wechat-mall-api/mvnw.cmd
+
+# IDE生成的文件
+backend-java/wechat-mall-api/*.iml
+backend-java/wechat-mall-api/.project
+backend-java/wechat-mall-api/.classpath
+backend-java/wechat-mall-api/.settings/
+
+# 日志文件
+backend-java/wechat-mall-api/logs/
+backend-java/wechat-mall-api/*.log
+
+# ===== 前端Vue项目相关 =====
+# 依赖包
+frontend/merchant-admin/node_modules/
+frontend/merchant-admin/dist/
+
+# 构建产物
+frontend/merchant-admin/.nuxt/
+frontend/merchant-admin/.output/
+frontend/merchant-admin/.vite/
+
+# 环境配置文件
+frontend/merchant-admin/.env.local
+frontend/merchant-admin/.env.*.local
+
+# ===== 微信小程序相关 =====
+# 微信开发者工具生成的文件
+project.private.config.json
+
+# ===== 系统和临时文件 =====
+# Windows系统文件
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+
+# macOS系统文件
+.DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.AppleDouble
+.LSOverride
+
+# 临时文件
+*.tmp
+*.temp
+*.cache
+
+# ===== 数据库和配置 =====
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 配置文件中的敏感信息
+application-local.properties
+application-dev.properties
+*.key
+*.pem
+
+# ===== 其他 =====
+# 压缩文件
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# 备份文件
+*.bak
+*.backup
+
+# SVN相关文件（如果之前使用过SVN）
+.svnignore

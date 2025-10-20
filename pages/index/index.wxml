@@ -1,0 +1,60 @@
+<view class="page-container">
+  <view class="header-search-container">
+    <view class="search-bar" bindtap="navigateToSearch">
+      <image src="/images/search.png" class="search-icon"></image>
+      <text>搜索商品</text>
+    </view>
+  </view>
+
+  <view class="swiper-container">
+    <swiper indicator-dots="true" autoplay="true" circular="true" indicator-active-color="#333333">
+      <swiper-item wx:for="{{ banners }}" wx:key="index">
+        <image src="{{ item.picUrl }}" class="swiper-image" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <view class="section-container">
+    <view class="section-title-wrapper"><text class="section-title">品类导航</text></view>
+    <view class="category-nav-grid">
+      <view class="category-nav-item" wx:for="{{categoryNavs}}" wx:key="index" 
+            bindtap="handleNavigate" data-maincategory="{{item.mainCategory}}">
+        <image src="{{item.image}}" class="category-nav-image" mode="aspectFill"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-container">
+    <view class="section-title-wrapper"><text class="section-title">球鞋定制</text></view>
+    <view bindtap="handleNavigate" data-maincategory="{{sneakerCustom.mainCategory}}" data-subcategory="{{sneakerCustom.subCategory}}">
+      <image src="{{sneakerCustom.image}}" class="custom-feature-image" mode="widthFix"></image>
+    </view>
+  </view>
+
+  <view class="section-container">
+    <view class="section-title-wrapper"><text class="section-title">当季主推</text></view>
+    <view bindtap="handleNavigate" data-maincategory="{{seasonalFeature.mainCategory}}" data-subcategory="{{seasonalFeature.subCategory}}">
+      <image src="{{seasonalFeature.image}}" class="seasonal-feature-image" mode="widthFix"></image>
+    </view>
+  </view>
+
+  <view class="section-container">
+     <view class="section-title-wrapper"><text class="section-title">装备分类</text></view>
+    <view class="equipment-grid">
+      <view class="equipment-item" wx:for="{{equipmentCategories}}" wx:key="index" 
+            bindtap="handleNavigate" data-maincategory="{{item.mainCategory}}" data-subcategory="{{item.subCategory}}">
+        <image src="{{item.image}}" class="equipment-image" mode="aspectFill"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-container">
+    <view class="section-title-wrapper"><text class="section-title">精选品牌</text></view>
+    <view class="brands-grid">
+      <view class="brand-item" wx:for="{{featuredBrands}}" wx:key="index"
+            bindtap="handleNavigate" data-maincategory="{{item.mainCategory}}" data-subcategory="{{item.subCategory}}">
+        <image src="{{item.logo}}" class="brand-logo" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,47 @@
+<view class="container">
+  <view class="tabs-container">
+    <view class="tab-item {{activeTab === index ? 'active' : ''}}" 
+          wx:for="{{tabs}}" 
+          wx:key="index"
+          bindtap="onTabClick" 
+          data-index="{{index}}">
+      {{item}}
+    </view>
+  </view>
+
+  <view class="order-list" wx:if="{{orders.length > 0}}">
+    <view class="order-card" wx:for="{{orders}}" wx:key="id" bindtap="onOrderDetail" data-id="{{item.id}}">
+      <view class="card-header">
+        <text class="order-no">订单号: {{item.orderNo}}</text>
+        <text class="order-status">{{item.statusText}}</text>
+      </view>
+      <view class="card-body">
+        <scroll-view class="product-scroll" scroll-x="true" wx:if="{{item.items.length > 1}}">
+          <image class="product-image-scroll" wx:for="{{item.items}}" wx:key="id" wx:for-item="product" src="{{product.image}}" mode="aspectFill"/>
+        </scroll-view>
+        <view class="single-product" wx:else>
+            <image class="product-image-single" src="{{item.items[0].image}}" mode="aspectFill"/>
+            <view class="product-name-single">{{item.items[0].name}}</view>
+        </view>
+      </view>
+      <view class="card-footer">
+        <text class="item-count">共{{item.items.length}}件</text>
+        <text class="total-amount">合计: ¥{{item.totalAmount}}</text>
+      </view>
+      <view class="card-actions" wx:if="{{item.status === 1 || item.status === 3}}">
+        <view class="action-btn primary" wx:if="{{item.status === 1}}">去付款</view>
+        <view class="action-btn" wx:if="{{item.status === 3}}">查看物流</view>
+        <view class="action-btn primary" wx:if="{{item.status === 3}}">确认收货</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && orders.length === 0}}">
+    <image class="empty-image" src="/images/empty-order.svg" />
+    <text class="empty-text">暂无相关订单</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

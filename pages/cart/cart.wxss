@@ -1,0 +1,222 @@
+/* pages/cart/cart.wxss */
+page {
+  background-color: #f5f5f5;
+}
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 240rpx;
+}
+.cart-header, .empty-cart .header {
+  background-color: #fff;
+  padding: 40rpx 30rpx;
+}
+.title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #111;
+}
+.empty-cart .subtitle {
+  font-size: 28rpx;
+  color: #888;
+  margin-top: 10rpx;
+}
+.top-notice {
+  background-color: #f5f5f5;
+  padding: 20rpx 30rpx;
+  font-size: 24rpx;
+  color: #888;
+}
+.cart-list {
+  background-color: #fff;
+  padding: 0 30rpx;
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.cart-item:last-child {
+  border-bottom: none;
+}
+.checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 1rpx solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  color: #fff;
+  font-size: 24rpx;
+}
+.checkbox.selected {
+  background-color: #111;
+  border-color: #111;
+}
+.product-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 10rpx;
+  background-color: #f5f5f5;
+  margin-right: 20rpx;
+}
+.product-info {
+  flex: 1;
+}
+
+/* 核心修改：让每个信息都单独占一行 */
+.product-name, .product-spec {
+  display: block; /* 确保每个text都换行 */
+}
+.product-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 8rpx; /* 微调间距 */
+}
+.product-spec {
+  font-size: 24rpx;
+  color: #888;
+  margin-top: 4rpx; /* 微调间距 */
+}
+.price-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120rpx;
+}
+.delete-action {
+  font-size: 24rpx;
+  color: #888;
+}
+.product-price {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #111;
+}
+
+.recommend-section {
+  padding: 40rpx 30rpx;
+  background-color: #f5f5f5;
+}
+.recommend-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  display: block;
+}
+.recommend-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+.product-item-rec { width: 31%; }
+.product-image-rec {
+  width: 100%;
+  height: 220rpx;
+  border-radius: 10rpx;
+  background-color: #fff;
+}
+.product-name-rec {
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-top: 10rpx;
+  display: block;
+}
+.product-price-rec {
+  font-size: 28rpx;
+  margin-top: 5rpx;
+}
+
+.checkout-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  padding: 20rpx 30rpx calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 100;
+}
+.bar-left {
+  display: flex;
+  align-items: center;
+  gap: 40rpx;
+}
+.select-all, .coupon-btn {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+}
+.coupon-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+.checkout-btn {
+  background-color: #111;
+  color: #fff;
+  border-radius: 50rpx;
+  padding: 0 40rpx;
+  height: 88rpx;
+}
+.total-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.total-amount {
+  font-size: 32rpx;
+  font-weight: bold;
+  padding-right: 40rpx;
+  border-right: 1rpx solid #555;
+  margin-right: 40rpx;
+}
+.checkout-text {
+  font-size: 30rpx;
+  font-weight: bold;
+}
+.empty-cart .header{ padding-bottom: 0; }
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  background-color: #fff;
+}
+.empty-icon {
+  width: 100rpx;
+  height: 100rpx;
+  padding: 40rpx;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  margin-bottom: 30rpx;
+}
+.empty-text {
+  font-size: 32rpx;
+  color: #111;
+  margin-bottom: 15rpx;
+}
+.empty-subtext {
+  font-size: 28rpx;
+  color: #888;
+  margin-bottom: 40rpx;
+}
+.go-shopping-btn {
+  background-color: #111;
+  color: #fff;
+  border-radius: 50rpx;
+  padding: 24rpx 80rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}

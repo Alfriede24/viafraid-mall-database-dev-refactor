@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: wechat-mall-api
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: pvah1376
+    url: jdbc:mysql://8.130.9.28:3306/test?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    type: com.alibaba.druid.pool.DruidDataSource
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

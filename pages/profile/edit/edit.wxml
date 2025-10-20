@@ -1,0 +1,36 @@
+<view class="container">
+  <view class="header">
+    <text class="title">编辑资料</text>
+  </view>
+
+  <view class="avatar-uploader" bindtap="onChangeAvatar">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" />
+    <view class="uploader-tip">
+      <image class="camera-icon" src="/images/camera-icon.svg"/>
+      <text>更换头像</text>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-item">
+      <text class="label">昵称</text>
+      <input class="input" placeholder="请输入昵称" model:value="{{userInfo.nickName}}" />
+    </view>
+    <view class="form-item">
+      <text class="label">手机号</text>
+      <text class="input-display">{{userInfo.phone || '未绑定'}}</text>
+    </view>
+    <view class="form-item">
+      <text class="label">性别</text>
+      <picker bindchange="onGenderChange" value="{{genderIndex}}" range="{{genderArray}}">
+         <view class="picker-content">
+            <text>{{genderArray[genderIndex]}}</text>
+         </view>
+      </picker>
+    </view>
+  </view>
+</view>
+
+<view class="save-btn-container">
+  <view class="save-btn" bindtap="onSave">保存</view>
+</view>
