@@ -1,4 +1,66 @@
 const SUCCESS_CODES = new Set([0, 200]);
+const CUSTOM_API_STORAGE_KEY = 'customApiBaseUrl';
+
+// 根据小程序环境划分的默认接口域名，可按需替换为真实地址
+const DEFAULT_BASE_URLS = {
+  develop: 'http://127.0.0.1:8080/api',
+  trial: 'https://trial-api.wechatmall.example.com/api',
+  release: 'https://api.wechatmall.example.com/api'
+};
+
+const sanitizeBaseUrl = (url) => {
+  if (typeof url !== 'string') {
+    return '';
+  }
+
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  return trimmed.replace(/\/$/, '');
+};
+
+const extractEnvVersion = () => {
+  if (typeof wx === 'undefined' || typeof wx.getAccountInfoSync !== 'function') {
+    return 'develop';
+  }
+
+  try {
+    const accountInfo = wx.getAccountInfoSync() || {};
+    return accountInfo?.miniProgram?.envVersion || 'develop';
+  } catch (error) {
+    console.warn('读取小程序环境信息失败', error);
+    return 'develop';
+  }
+};
+
+const resolveDefaultBaseUrl = () => {
+  const envVersion = extractEnvVersion();
+  return DEFAULT_BASE_URLS[envVersion] || DEFAULT_BASE_URLS.develop;
+};
+
+const readStoredBaseUrl = () => {
+  if (typeof wx === 'undefined' || typeof wx.getStorageSync !== 'function') {
+    return '';
+  }
+
+  try {
+    return sanitizeBaseUrl(wx.getStorageSync(CUSTOM_API_STORAGE_KEY));
+  } catch (error) {
+    console.warn('读取自定义接口域名失败', error);
+    return '';
+  }
+};
+
+const determineInitialBaseUrl = () => {
+  const stored = readStoredBaseUrl();
+  if (stored) {
+    return stored;
+  }
+
+  return sanitizeBaseUrl(resolveDefaultBaseUrl());
+};
 
 function createHttpClient(appInstance) {
   const normalizeUrl = (url = '') => {
@@ -92,6 +154,11 @@ App({
 
     this.initUserInfo();
 
+    const initialBaseUrl = determineInitialBaseUrl();
+    if (initialBaseUrl) {
+      this.updateApiBaseUrl(initialBaseUrl);
+    }
+
     this.globalData.httpClient = createHttpClient(this);
     if (typeof this.userInfoReadyCallback === 'function') {
       this.userInfoReadyCallback();
@@ -100,9 +167,9 @@ App({
 
   globalData: {
     userInfo: null,
-    apiBase: 'http://localhost:8080/api',
-    apiBaseUrl: 'http://localhost:8080/api',
-    apiUrl: 'http://localhost:8080/api',
+    apiBase: '',
+    apiBaseUrl: '',
+    apiUrl: '',
     token: null,
     userId: null,
     isGuest: false,
@@ -125,9 +192,7 @@ App({
       return Promise.reject(new Error('请求地址不能为空'));
     }
 
-    if (!this.globalData.httpClient) {
-      this.globalData.httpClient = createHttpClient(this);
-    }
+    this.ensureHttpClient();
 
     return this.globalData.httpClient
       .request(method, url, data, { header, contentType, timeout })
@@ -169,6 +234,70 @@ App({
     });
   },
 
+  ensureHttpClient() {
+    if (!this.globalData.apiBaseUrl) {
+      const fallbackBaseUrl = determineInitialBaseUrl();
+      if (fallbackBaseUrl) {
+        this.updateApiBaseUrl(fallbackBaseUrl);
+      }
+    }
+
+    if (!this.globalData.httpClient) {
+      this.globalData.httpClient = createHttpClient(this);
+    }
+  },
+
+  updateApiBaseUrl(baseUrl) {
+    const sanitized = sanitizeBaseUrl(baseUrl);
+    if (!sanitized) {
+      console.warn('设置的接口基础地址为空，将保持现有配置');
+      return;
+    }
+
+    this.globalData.apiBase = sanitized;
+    this.globalData.apiBaseUrl = sanitized;
+    this.globalData.apiUrl = sanitized;
+
+    if (this.globalData.httpClient) {
+      this.globalData.httpClient = createHttpClient(this);
+    }
+  },
+
+  setApiBaseUrl(baseUrl, options = {}) {
+    const sanitized = sanitizeBaseUrl(baseUrl);
+    if (!sanitized) {
+      this.resetApiBaseUrl();
+      return;
+    }
+
+    try {
+      const shouldPersist = !options || options.persist !== false;
+      if (shouldPersist && typeof wx !== 'undefined' && typeof wx.setStorageSync === 'function') {
+        wx.setStorageSync(CUSTOM_API_STORAGE_KEY, sanitized);
+      }
+    } catch (error) {
+      console.warn('保存自定义接口域名失败', error);
+    }
+
+    this.updateApiBaseUrl(sanitized);
+  },
+
+  resetApiBaseUrl() {
+    const defaultBaseUrl = determineInitialBaseUrl();
+
+    try {
+      if (typeof wx !== 'undefined' && typeof wx.removeStorageSync === 'function') {
+        wx.removeStorageSync(CUSTOM_API_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.warn('清除自定义接口域名失败', error);
+    }
+
+    if (defaultBaseUrl) {
+      this.updateApiBaseUrl(defaultBaseUrl);
+    }
+  },
+
   initUserInfo() {
     try {
       const userInfo = wx.getStorageSync('userInfo') || null;
@@ -185,3 +314,4 @@ App({
     }
   }
 });
+
