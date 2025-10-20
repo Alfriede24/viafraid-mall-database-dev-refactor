@@ -61,14 +61,35 @@ Page({
   
   // ---- 網路請求函數保持不變 ----
   getBannerList() {
-    app.globalData.httpClient.get(`/banner/list`).then(res => {
-      if (res.data.code == 0) { this.setData({ banners: res.data.data }); }
-    })
+    app.request({ url: '/miniapp/banners', silent: true })
+      .then((payload) => {
+        if (this.isSuccessful(payload)) {
+          this.setData({ banners: payload.data || [] });
+        }
+      })
+      .catch((err) => {
+        console.warn('获取首页轮播失败', err);
+      });
   },
   getProductList() {
-    app.globalData.httpClient.get(`/product/list`).then(res => {
-      if (res.data.code == 0) { this.setData({ productList: res.data.data }); }
-    })
+    app.request({ url: '/miniapp/products/recommendations', silent: true })
+      .then((payload) => {
+        if (this.isSuccessful(payload)) {
+          this.setData({ productList: payload.data || [] });
+        }
+      })
+      .catch((err) => {
+        console.warn('获取推荐商品失败', err);
+      });
+  },
+  isSuccessful(payload) {
+    if (!payload) {
+      return false;
+    }
+    if (payload.code === undefined) {
+      return true;
+    }
+    return payload.code === 0 || payload.code === 200;
   },
   onShareAppMessage: function () {
     return {

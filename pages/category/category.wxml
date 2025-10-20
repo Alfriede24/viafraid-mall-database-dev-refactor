@@ -57,6 +57,10 @@
             <image class="product-image" src="{{item.picUrl}}" mode="aspectFill"></image>
             <view class="product-name">{{item.name}}</view>
             <view class="product-price">¥{{item.minPrice}}</view>
+            <view class="product-meta">
+              <text class="meta-item">浏览 {{item.viewCount || 0}}</text>
+              <text class="meta-item">销量 {{item.salesCount || 0}}</text>
+            </view>
           </view>
         </view>
 

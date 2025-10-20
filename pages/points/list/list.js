@@ -11,17 +11,22 @@ Page({
     hasMore: true
   },
 
-  onLoad(options) {
+  onLoad() {
     this.loadSummary();
     this.loadHistory(true);
   },
 
   async loadSummary() {
     try {
-      // 模拟API
-      this.setData({ totalPoints: 1250 });
+      const res = await app.request({
+        url: '/miniapp/member/assets/points/summary',
+        method: 'GET',
+        silent: true
+      });
+      const summary = res?.data || {};
+      this.setData({ totalPoints: summary.availablePoints || 0 });
     } catch (error) {
-      console.error("加载积分概要失败", error);
+      wx.showToast({ title: error?.message || '加载积分失败', icon: 'none' });
     }
   },
 
@@ -31,22 +36,29 @@ Page({
 
     const page = refresh ? 1 : this.data.page;
 
-    // 模拟API
-    setTimeout(() => {
-        const newHistory = [
-            { description: "订单完成，返还积分", createdAt: "2024-05-20 10:30", points: 199 },
-            { description: "积分兑换商品", createdAt: "2024-05-18 15:00", points: -500 },
-            { description: "订单完成，返还积分", createdAt: "2024-05-15 12:10", points: 88 }
-        ];
+    try {
+      const res = await app.request({
+        url: '/miniapp/member/assets/points/history',
+        method: 'GET',
+        data: { page, pageSize: this.data.pageSize },
+        silent: true
+      });
 
-        this.setData({
-            history: refresh ? newHistory : [...this.data.history, ...newHistory],
-            page: page + 1,
-            hasMore: newHistory.length >= this.data.pageSize,
-            loading: false
-        });
-        wx.stopPullDownRefresh();
-    }, 500);
+      const payload = res?.data || {};
+      const items = payload.items || [];
+
+      this.setData({
+        history: refresh ? items : [...this.data.history, ...items],
+        page: page + 1,
+        hasMore: !!payload.hasNext,
+        loading: false
+      });
+    } catch (error) {
+      wx.showToast({ title: error?.message || '加载失败', icon: 'none' });
+      this.setData({ loading: false });
+    } finally {
+      wx.stopPullDownRefresh();
+    }
   },
 
   onPullDownRefresh() {

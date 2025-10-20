@@ -74,23 +74,21 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const res = await wx.request({
-        url: `${app.globalData.apiBaseUrl}/api/products`,
+      const payload = await app.request({
+        url: '/miniapp/products/search',
         method: 'GET',
         data: {
           keyword: this.data.keyword,
           page: this.data.currentPage,
           pageSize: this.data.pageSize
         },
-        header: {
-          'Authorization': `Bearer ${app.globalData.token}`
-        }
+        silent: true
       })
 
-      if (res.data.success) {
-        const { items, total } = res.data.data
+      if (this.isSuccessful(payload)) {
+        const { items = [], total = 0 } = payload.data || {}
         const newProducts = this.data.currentPage === 1 ? items : [...this.data.products, ...items]
-        
+
         this.setData({
           products: newProducts,
           totalCount: total,
@@ -98,7 +96,7 @@ Page({
         })
       } else {
         wx.showToast({
-          title: res.data.message || '搜索失败',
+          title: payload?.message || '搜索失败',
           icon: 'none'
         })
       }
@@ -209,5 +207,15 @@ Page({
     } catch (error) {
       console.error('保存搜索历史失败:', error)
     }
+  },
+
+  isSuccessful(payload) {
+    if (!payload) {
+      return false
+    }
+    if (payload.code === undefined) {
+      return true
+    }
+    return payload.code === 0 || payload.code === 200
   }
 })
