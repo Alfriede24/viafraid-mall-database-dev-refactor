@@ -29,6 +29,10 @@ page {
   padding: 30rpx 0;
   border-bottom: 1rpx solid #f0f0f0;
 }
+.setting-item-column {
+  flex-direction: column;
+  align-items: flex-start;
+}
 .setting-item:last-child {
   border-bottom: none;
 }
@@ -36,6 +40,9 @@ page {
 .item-content {
   display: flex;
   flex-direction: column;
+}
+.item-content-full {
+  width: 100%;
 }
 
 .label {
@@ -66,6 +73,49 @@ page {
 
 .version {
   color: #999;
+}
+
+.api-input {
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  width: 100%;
+  border: 1rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+}
+
+.api-actions {
+  margin-top: 24rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.api-button {
+  flex: none;
+  padding: 0 32rpx;
+  line-height: 64rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  background-color: #f5f5f5;
+  color: #111;
+}
+.api-button::after {
+  border: none;
+}
+
+.api-button-primary {
+  background-color: #111;
+  color: #fff;
+}
+
+.api-tip {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.5;
 }
 
 .logout-btn {
