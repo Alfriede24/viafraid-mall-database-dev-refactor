@@ -1,5 +1,6 @@
 // pages/order/detail/detail.js
 const logisticsUtil = require('../../../utils/logistics.js');
+const app = getApp();
 
 Page({
   data: {
@@ -17,73 +18,39 @@ Page({
   },
 
   onLoad: function (options) {
-    if (options.orderId) {
-      this.setData({
-        orderId: options.orderId
-      });
+    const orderId = options?.id || options?.orderId;
+    if (orderId) {
+      this.setData({ orderId });
       this.loadOrderDetail();
     }
   },
 
   // 加载订单详情
-  loadOrderDetail: function () {
-    const app = getApp();
+  loadOrderDetail: async function () {
+    if (!this.data.orderId) {
+      return;
+    }
+
     this.setData({ loading: true });
 
-    // 模拟API调用
-    setTimeout(() => {
-      const mockOrder = {
-        id: this.data.orderId,
-        status: 'shipped',
-        statusText: '待收货',
-        createTime: '2024-01-15 14:30:00',
-        payTime: '2024-01-15 14:32:15',
-        totalAmount: 299.00,
-        freight: 10.00,
-        discount: 20.00,
-        actualAmount: 289.00,
-        payMethod: '微信支付',
-        orderNo: 'WX' + Date.now(),
-        
-        // 收货地址
-        address: {
-          name: '张三',
-          phone: '138****8888',
-          region: '广东省 深圳市 南山区',
-          detail: '科技园南区深南大道10000号'
-        },
-        
-        // 商品列表
-        items: [
-          {
-            id: 1,
-            name: 'iPhone 15 Pro Max',
-            image: 'https://via.placeholder.com/300x300',
-            price: 149.00,
-            quantity: 2,
-            specs: '深空黑色 256GB'
-          }
-        ],
-        
-        // 物流信息
-        logistics: {
-          company: '顺丰速运',
-          trackingNo: 'SF1234567890',
-          status: '运输中',
-          updateTime: '2024-01-16 10:30:00'
-        }
-      };
-
-      this.setData({
-        order: mockOrder,
-        loading: false
+    try {
+      const res = await app.request({
+        url: `/miniapp/orders/${this.data.orderId}`,
+        method: 'GET'
       });
-      
-      // 如果订单有物流信息且状态为已发货或已完成，启动物流状态订阅
-      if (mockOrder.logistics && logisticsUtil.shouldShowLogistics(mockOrder.status)) {
-        this.startLogisticsSubscription();
+
+      const order = res?.data || null;
+      this.setData({ order, loading: false });
+
+      if (order && order.logistics && logisticsUtil.shouldShowLogistics(order.status)) {
+        this.startLogisticsSubscription(order);
+      } else {
+        this.stopLogisticsSubscription();
       }
-    }, 1000);
+    } catch (error) {
+      this.setData({ loading: false, order: null });
+      wx.showToast({ title: error?.message || '加载订单失败', icon: 'none' });
+    }
   },
 
   // 复制订单号
@@ -132,28 +99,33 @@ Page({
 
   // 取消订单
   onCancelOrder: function () {
-    const self = this;
+    if (!this.data.orderId) {
+      return;
+    }
+
     wx.showModal({
       title: '取消订单',
       content: '确定要取消这个订单吗？',
-      success: function (res) {
-        if (res.confirm) {
+      success: async (res) => {
+        if (!res.confirm) {
+          return;
+        }
+
+        try {
           wx.showLoading({ title: '处理中...' });
-          
-          // 模拟API调用
-          setTimeout(() => {
-            wx.hideLoading();
-            wx.showToast({
-              title: '订单已取消',
-              icon: 'success'
-            });
-            
-            // 更新订单状态
-            self.setData({
-              'order.status': 'cancelled',
-              'order.statusText': '已取消'
-            });
-          }, 1500);
+          const resp = await app.request({
+            url: `/miniapp/orders/${this.data.orderId}/cancel`,
+            method: 'POST'
+          });
+          wx.hideLoading();
+
+          const updated = resp?.data || null;
+          this.setData({ order: updated });
+          wx.showToast({ title: '订单已取消', icon: 'success' });
+          this.stopLogisticsSubscription();
+        } catch (error) {
+          wx.hideLoading();
+          wx.showToast({ title: error?.message || '取消失败', icon: 'none' });
         }
       }
     });
@@ -161,49 +133,58 @@ Page({
 
   // 去付款
   onPayOrder: function () {
+    if (!this.data.orderId) {
+      return;
+    }
+
     wx.showLoading({ title: '调起支付...' });
-    
-    // 模拟支付
-    setTimeout(() => {
+
+    app.request({
+      url: `/miniapp/orders/${this.data.orderId}/pay`,
+      method: 'POST'
+    }).then((res) => {
       wx.hideLoading();
-      wx.showToast({
-        title: '支付成功',
-        icon: 'success'
-      });
-      
-      // 更新订单状态
-      this.setData({
-        'order.status': 'paid',
-        'order.statusText': '待发货',
-        'order.payTime': new Date().toLocaleString()
-      });
-    }, 2000);
+      const updated = res?.data || null;
+      this.setData({ order: updated });
+      wx.showToast({ title: '支付成功', icon: 'success' });
+      if (updated && updated.logistics && logisticsUtil.shouldShowLogistics(updated.status)) {
+        this.startLogisticsSubscription(updated);
+      }
+    }).catch((error) => {
+      wx.hideLoading();
+      wx.showToast({ title: error?.message || '支付失败', icon: 'none' });
+    });
   },
 
   // 确认收货
   onConfirmReceive: function () {
-    const self = this;
+    if (!this.data.orderId) {
+      return;
+    }
+
     wx.showModal({
       title: '确认收货',
       content: '确认已收到商品吗？',
-      success: function (res) {
-        if (res.confirm) {
+      success: async (res) => {
+        if (!res.confirm) {
+          return;
+        }
+
+        try {
           wx.showLoading({ title: '处理中...' });
-          
-          // 模拟API调用
-          setTimeout(() => {
-            wx.hideLoading();
-            wx.showToast({
-              title: '确认收货成功',
-              icon: 'success'
-            });
-            
-            // 更新订单状态
-            self.setData({
-              'order.status': 'completed',
-              'order.statusText': '已完成'
-            });
-          }, 1500);
+          const resp = await app.request({
+            url: `/miniapp/orders/${this.data.orderId}/confirm`,
+            method: 'POST'
+          });
+          wx.hideLoading();
+
+          const updated = resp?.data || null;
+          this.setData({ order: updated });
+          wx.showToast({ title: '确认收货成功', icon: 'success' });
+          this.stopLogisticsSubscription();
+        } catch (error) {
+          wx.hideLoading();
+          wx.showToast({ title: error?.message || '操作失败', icon: 'none' });
         }
       }
     });
@@ -234,18 +215,23 @@ Page({
 
   // 再次购买
   onBuyAgain: function () {
+    const firstItem = this.data.order?.items?.[0];
+    if (!firstItem) {
+      return;
+    }
     wx.navigateTo({
-      url: '/pages/product/detail/detail?id=' + this.data.order.items[0].id
+      url: '/pages/product/detail/detail?id=' + firstItem.id
     });
   },
 
   // 启动物流状态订阅
-  startLogisticsSubscription: function () {
+  startLogisticsSubscription: function (orderData) {
     const self = this;
     if (this.data.logisticsUpdateInterval) {
       logisticsUtil.unsubscribeLogisticsUpdate(this.data.logisticsUpdateInterval);
     }
-    
+
+    const logistics = orderData?.logistics || this.data.order?.logistics || {};
     const intervalId = logisticsUtil.subscribeLogisticsUpdate(
       this.data.orderId,
       function (updateData) {
@@ -254,9 +240,13 @@ Page({
           'order.logistics.status': updateData.status,
           'order.logistics.updateTime': updateData.updateTime
         });
-        
+
         // 发送通知
         logisticsUtil.sendLogisticsNotification(updateData);
+      },
+      {
+        company: logistics.company,
+        trackingNo: logistics.trackingNo
       }
     );
     
@@ -278,9 +268,8 @@ Page({
   // 页面显示时
   onShow: function () {
     // 如果有物流信息，重新启动订阅
-    if (this.data.order && this.data.order.logistics && 
-        logisticsUtil.shouldShowLogistics(this.data.order.status)) {
-      this.startLogisticsSubscription();
+    if (this.data.order && this.data.order.logistics && logisticsUtil.shouldShowLogistics(this.data.order.status)) {
+      this.startLogisticsSubscription(this.data.order);
     }
   },
 
@@ -296,7 +285,13 @@ Page({
 
   // 下拉刷新
   onPullDownRefresh: function () {
-    this.loadOrderDetail();
-    wx.stopPullDownRefresh();
+    const loadPromise = this.loadOrderDetail();
+    if (loadPromise && typeof loadPromise.finally === 'function') {
+      loadPromise.finally(() => {
+        wx.stopPullDownRefresh();
+      });
+    } else {
+      wx.stopPullDownRefresh();
+    }
   }
 });

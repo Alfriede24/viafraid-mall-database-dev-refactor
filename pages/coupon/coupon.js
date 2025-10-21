@@ -1,4 +1,6 @@
 // pages/coupon/coupon.js
+const app = getApp();
+
 Page({
   data: {
     tabs: ['未使用', '已使用', '已过期'],
@@ -7,7 +9,7 @@ Page({
     loading: true
   },
 
-  onLoad(options) {
+  onLoad() {
     this.loadCoupons(this.data.activeTab);
   },
 
@@ -17,28 +19,25 @@ Page({
     this.loadCoupons(index);
   },
 
-  loadCoupons(tabIndex) {
+  async loadCoupons(tabIndex) {
     this.setData({ loading: true });
 
-    // 模拟数据加载
-    setTimeout(() => {
-      // 完整的模拟数据
-      const allCoupons = [
-        { id: 1, name: '新人专享券', description: '满100元可用', value: 20, validPeriod: '2025.10.31', status: 'unused' },
-        { id: 2, name: '全场通用券', description: '满200元可用', value: 50, validPeriod: '2025.12.31', status: 'unused' },
-        { id: 3, name: '会员生日礼券', description: '无门槛', value: 100, validPeriod: '2025.08.31', status: 'used' },
-        { id: 4, name: '活动体验券', description: '满50元可用', value: 10, validPeriod: '2025.07.31', status: 'expired' }
-      ];
+    const statusMap = ['unused', 'used', 'expired'];
+    const status = statusMap[tabIndex] || 'unused';
 
-      // 根据tabIndex筛选优惠券
-      const statusMap = ['unused', 'used', 'expired'];
-      const currentStatus = statusMap[tabIndex];
-      const filteredCoupons = allCoupons.filter(coupon => coupon.status === currentStatus);
-
-      this.setData({
-        coupons: filteredCoupons,
-        loading: false
+    try {
+      const res = await app.request({
+        url: '/miniapp/member/assets/coupons',
+        method: 'GET',
+        data: { status },
+        silent: true
       });
-    }, 500);
+
+      const list = res?.data || [];
+      this.setData({ coupons: list, loading: false });
+    } catch (error) {
+      this.setData({ loading: false, coupons: [] });
+      wx.showToast({ title: error?.message || '加载优惠券失败', icon: 'none' });
+    }
   }
 });

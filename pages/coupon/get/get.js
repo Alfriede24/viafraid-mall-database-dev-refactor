@@ -1,6 +1,18 @@
 // pages/coupon/get/get.js
 const app = getApp()
 
+const extractData = (payload) => {
+  if (!payload || typeof payload !== 'object') {
+    return payload
+  }
+
+  if (payload.data !== undefined) {
+    return payload.data
+  }
+
+  return payload
+}
+
 Page({
   data: {
     coupons: [], // 可领取的优惠券列表
@@ -36,57 +48,62 @@ Page({
   // 加载可领取的优惠券列表
   async loadCoupons(isLoadMore = false) {
     if (this.data.loading || this.data.loadingMore) return
-    
+
     const loadingKey = isLoadMore ? 'loadingMore' : 'loading'
     this.setData({ [loadingKey]: true })
-    
+
     try {
-      const response = await wx.request({
-        url: `${app.globalData.apiBaseUrl}/coupons/available`,
+      const payload = await app.request({
+        url: '/coupons/available',
         method: 'GET',
-        header: {
-          'Content-Type': 'application/json'
-        },
         data: {
           page: this.data.page,
           pageSize: this.data.pageSize
-        }
+        },
+        silent: true
       })
 
-      if (response.statusCode === 200) {
-        const { items, hasMore } = response.data
-        
-        // 格式化优惠券数据
-        const formattedCoupons = items.map(item => ({
-          ...item,
-          startTime: this.formatDateTime(item.startTime),
-          endTime: this.formatDateTime(item.endTime),
-          receiving: false, // 添加领取状态
-          isReceived: false // 添加是否已领取状态
-        }))
-        
-        // 检查用户是否已领取这些优惠券
-        await this.checkReceivedStatus(formattedCoupons)
-        
-        this.setData({
-          coupons: isLoadMore ? [...this.data.coupons, ...formattedCoupons] : formattedCoupons,
-          hasMore: hasMore,
-          page: isLoadMore ? this.data.page + 1 : this.data.page + 1
-        })
-      } else {
-        wx.showToast({
-          title: '加载失败',
-          icon: 'none'
-        })
-      }
+      const rawData = extractData(payload) || {}
+      const sourceItems = Array.isArray(rawData.items)
+        ? rawData.items
+        : Array.isArray(rawData.list)
+        ? rawData.list
+        : Array.isArray(rawData.records)
+        ? rawData.records
+        : Array.isArray(rawData)
+        ? rawData
+        : []
+
+      const formattedCoupons = sourceItems.map((item) => ({
+        ...item,
+        startTime: this.formatDateTime(item.startTime),
+        endTime: this.formatDateTime(item.endTime),
+        receiving: false,
+        isReceived: false
+      }))
+
+      await this.checkReceivedStatus(formattedCoupons)
+
+      const hasMore =
+        rawData.hasMore !== undefined
+          ? rawData.hasMore
+          : rawData.hasNext !== undefined
+          ? rawData.hasNext
+          : formattedCoupons.length === this.data.pageSize
+
+      this.setData({
+        coupons: isLoadMore ? [...this.data.coupons, ...formattedCoupons] : formattedCoupons,
+        hasMore,
+        page: this.data.page + 1
+      })
     } catch (error) {
       console.error('加载优惠券失败:', error)
       wx.showToast({
-        title: '网络错误',
+        title: error?.message || '加载失败',
         icon: 'none'
       })
     } finally {
-      this.setData({ 
+      this.setData({
         [loadingKey]: false,
         refreshing: false
       })
@@ -97,28 +114,28 @@ Page({
   // 检查用户已领取状态
   async checkReceivedStatus(coupons) {
     const token = wx.getStorageSync('token')
-    if (!token) return
-    
+    if (!token || !Array.isArray(coupons) || coupons.length === 0) return
+
     try {
-      const couponIds = coupons.map(c => c.id)
-      const response = await wx.request({
-        url: `${app.globalData.apiBaseUrl}/user-coupons/check-received`,
+      const couponIds = coupons.map((c) => c.id)
+      const payload = await app.request({
+        url: '/user-coupons/check-received',
         method: 'POST',
-        header: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         data: {
-          couponIds: couponIds
-        }
+          couponIds
+        },
+        silent: true
       })
-      
-      if (response.statusCode === 200) {
-        const receivedIds = response.data.receivedCouponIds || []
-        coupons.forEach(coupon => {
-          coupon.isReceived = receivedIds.includes(coupon.id)
-        })
-      }
+
+      const data = extractData(payload) || {}
+      const receivedIdsSource = Array.isArray(data)
+        ? data
+        : data.receivedCouponIds || data.ids || []
+      const receivedIds = Array.isArray(receivedIdsSource) ? receivedIdsSource : []
+
+      coupons.forEach((coupon) => {
+        coupon.isReceived = receivedIds.includes(coupon.id)
+      })
     } catch (error) {
       console.error('检查领取状态失败:', error)
     }
@@ -127,23 +144,29 @@ Page({
   // 加载已领取数量
   async loadReceivedCount() {
     const token = wx.getStorageSync('token')
-    if (!token) return
-    
+    if (!token) {
+      this.setData({ receivedCount: 0 })
+      return
+    }
+
     try {
-      const response = await wx.request({
-        url: `${app.globalData.apiBaseUrl}/user-coupons/count`,
+      const payload = await app.request({
+        url: '/user-coupons/count',
         method: 'GET',
-        header: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        silent: true
       })
-      
-      if (response.statusCode === 200) {
-        this.setData({
-          receivedCount: response.data.count || 0
-        })
-      }
+
+      const data = extractData(payload)
+      const count =
+        typeof data === 'number'
+          ? data
+          : data && typeof data === 'object'
+          ? data.count ?? data.total ?? 0
+          : 0
+
+      this.setData({
+        receivedCount: count
+      })
     } catch (error) {
       console.error('加载已领取数量失败:', error)
     }
@@ -215,49 +238,43 @@ Page({
     }
     
     // 设置领取状态
-    const couponIndex = this.data.coupons.findIndex(c => c.id === coupon.id)
+    const couponIndex = this.data.coupons.findIndex((c) => c.id === coupon.id)
     if (couponIndex === -1) return
     
     this.setData({
       [`coupons[${couponIndex}].receiving`]: true
     })
-    
+
     try {
-      const response = await wx.request({
-        url: `${app.globalData.apiBaseUrl}/user-coupons/receive`,
+      await app.request({
+        url: '/user-coupons/receive',
         method: 'POST',
-        header: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
         data: {
           couponId: coupon.id
-        }
+        },
+        silent: true
       })
-      
-      if (response.statusCode === 200) {
-        // 领取成功
-        this.setData({
-          [`coupons[${couponIndex}].isReceived`]: true,
-          [`coupons[${couponIndex}].remainingQuantity`]: coupon.remainingQuantity - 1,
-          receivedCount: this.data.receivedCount + 1,
-          showSuccessModal: true,
-          successCoupon: coupon
-        })
-        
-        // 震动反馈
-        wx.vibrateShort()
-      } else {
-        const errorMsg = response.data?.message || '领取失败'
-        wx.showToast({
-          title: errorMsg,
-          icon: 'none'
-        })
+
+      const updatedRemaining = Math.max(0, (coupon.remainingQuantity || 0) - 1)
+      const updatedCoupon = {
+        ...coupon,
+        isReceived: true,
+        remainingQuantity: updatedRemaining
       }
+
+      this.setData({
+        [`coupons[${couponIndex}].isReceived`]: true,
+        [`coupons[${couponIndex}].remainingQuantity`]: updatedRemaining,
+        receivedCount: this.data.receivedCount + 1,
+        showSuccessModal: true,
+        successCoupon: updatedCoupon
+      })
+
+      wx.vibrateShort()
     } catch (error) {
       console.error('领取优惠券失败:', error)
       wx.showToast({
-        title: '网络错误',
+        title: error?.message || '领取失败',
         icon: 'none'
       })
     } finally {

@@ -1,10 +1,84 @@
 // pages/setting/setting.js
+const app = getApp();
+
+const readStoredApiBaseUrl = () => {
+  try {
+    return wx.getStorageSync('customApiBaseUrl') || '';
+  } catch (error) {
+    console.warn('读取自定义接口地址失败', error);
+    return '';
+  }
+};
+
 Page({
   data: {
     cacheSize: '5.2 MB',
     notifications: true,
+    apiBaseUrl: '',
+    customApiBaseUrl: '',
+    savingApiBase: false,
   },
-  onLoad(options) {},
+
+  onLoad() {
+    this.refreshApiBaseUrl();
+  },
+
+  onShow() {
+    this.refreshApiBaseUrl();
+  },
+
+  refreshApiBaseUrl() {
+    app?.ensureHttpClient?.();
+    const apiBaseUrl = app?.globalData?.apiBaseUrl || '';
+    const customApiBaseUrl = readStoredApiBaseUrl();
+
+    this.setData({
+      apiBaseUrl,
+      customApiBaseUrl,
+    });
+  },
+
+  onApiBaseInput(e) {
+    this.setData({
+      customApiBaseUrl: e.detail.value,
+    });
+  },
+
+  onSaveApiBase() {
+    if (this.data.savingApiBase) {
+      return;
+    }
+
+    const inputValue = (this.data.customApiBaseUrl || '').trim();
+    if (!inputValue) {
+      wx.showToast({ title: '请输入完整的接口地址', icon: 'none' });
+      return;
+    }
+
+    if (!/^https?:\/\//i.test(inputValue)) {
+      wx.showToast({ title: '接口地址需以 http(s) 开头', icon: 'none' });
+      return;
+    }
+
+    this.setData({ savingApiBase: true });
+
+    try {
+      app?.setApiBaseUrl?.(inputValue, { persist: true });
+      this.refreshApiBaseUrl();
+      wx.showToast({ title: '接口地址已保存', icon: 'success' });
+    } catch (error) {
+      console.error('保存接口地址失败', error);
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+    } finally {
+      this.setData({ savingApiBase: false });
+    }
+  },
+
+  onResetApiBase() {
+    app?.resetApiBaseUrl?.();
+    this.refreshApiBaseUrl();
+    wx.showToast({ title: '已恢复默认接口', icon: 'none' });
+  },
 
   onNotificationChange(e) {
     this.setData({
@@ -35,11 +109,9 @@ Page({
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          // 清除登录缓存并返回“我的”页面
           wx.removeStorageSync('token');
           wx.removeStorageSync('userInfo');
-          
-          // 使用 reLaunch 跳转到 Tab Bar 页面，并刷新状态
+
           wx.reLaunch({
             url: '/pages/profile/profile',
           });
@@ -49,7 +121,6 @@ Page({
   },
 
   onAboutUs() {
-    // 您可以在此跳转到“关于我们”的页面
     wx.showToast({ title: '关于我们页面待创建', icon: 'none' });
   },
 });

@@ -168,25 +168,39 @@ Page({
       return;
     }
     
-    let apiUrl = `/product/list?categoryId=${categoryId || ''}`;
-    if (categoryId === 'hot' && seriesId) {
-      apiUrl += `&series=${seriesId}`;
-    }
-    if (categoryId === 'brands' && brandId) {
-      apiUrl += `&brand=${brandId}`;
-    }
-    
-    console.log(`正在請求 API: ${apiUrl}`);
+    const requestData = {
+      mainCategory: this.data.currentMainCategory,
+      categoryId,
+      seriesId,
+      brandId
+    };
 
-    app.globalData.httpClient.get(apiUrl).then(res => {
-      if (res.data.code == 0) {
-        this.setData({ productList: res.data.data });
-      } else {
+    app.request({
+      url: '/miniapp/products',
+      method: 'GET',
+      data: requestData,
+      silent: true
+    })
+      .then((payload) => {
+        if (this.isSuccessful(payload)) {
+          this.setData({ productList: payload.data || [] });
+        } else {
+          this.setData({ productList: [] });
+        }
+      })
+      .catch((err) => {
         this.setData({ productList: [] });
-      }
-    }).catch(err => {
-      this.setData({ productList: [] });
-      console.error("獲取商品列表失敗", err);
-    });
+        console.error('獲取商品列表失敗', err);
+      });
+  },
+
+  isSuccessful(payload) {
+    if (!payload) {
+      return false;
+    }
+    if (payload.code === undefined) {
+      return true;
+    }
+    return payload.code === 0 || payload.code === 200;
   },
 })

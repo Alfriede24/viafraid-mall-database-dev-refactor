@@ -196,6 +196,15 @@
 .product-stats {
   display: flex;
   align-items: center;
+  gap: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.product-stats .sales,
+.product-stats .views {
+  display: inline-flex;
+  align-items: center;
 }
 
 .sales {

@@ -1,4 +1,17 @@
 // 快递100工具类
+const buildApiUrl = (path) => {
+  const app = getApp ? getApp() : null;
+  const baseUrl = app?.globalData?.apiBaseUrl || '';
+
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const base = baseUrl.replace(/\/$/, '');
+  const suffix = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${suffix}`;
+};
+
 const express100Utils = {
   // 快递公司编码映射
   companyMap: {
@@ -17,66 +30,104 @@ const express100Utils = {
   /**
    * 查询快递信息
    */
-  async queryExpress(trackingNumber, companyCode, phone = '') {
-    try {
-      const response = await wx.request({
-        url: `${getApp().globalData.apiBaseUrl}/api/Express100/query`,
+  queryExpress(trackingNumber, companyCode, phone = '') {
+    return new Promise((resolve) => {
+      wx.request({
+        url: buildApiUrl('/Express100/query'),
         method: 'GET',
         data: {
           trackingNumber,
           companyCode,
           phone
+        },
+        success: (res) => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            const payload = res.data || {};
+            const responseData = payload.data !== undefined ? payload.data : payload;
+            const code = payload.code;
+            const isSuccess = code === undefined || code === 0 || code === 200;
+
+            if (isSuccess) {
+              resolve({
+                success: true,
+                data: responseData
+              });
+              return;
+            }
+
+            resolve({
+              success: false,
+              message: payload.message || '查询失败',
+              data: responseData
+            });
+            return;
+          }
+
+          resolve({
+            success: false,
+            message: `查询失败(${res.statusCode})`,
+            data: res.data
+          });
+        },
+        fail: (error) => {
+          console.error('查询快递信息失败:', error);
+          resolve({
+            success: false,
+            message: '网络错误，请稍后重试',
+            error
+          });
         }
       });
-
-      if (response.statusCode === 200) {
-        return {
-          success: true,
-          data: response.data
-        };
-      } else {
-        return {
-          success: false,
-          message: response.data?.message || '查询失败'
-        };
-      }
-    } catch (error) {
-      console.error('查询快递信息失败:', error);
-      return {
-        success: false,
-        message: '网络错误，请稍后重试'
-      };
-    }
+    });
   },
 
   /**
    * 获取支持的快递公司列表
    */
-  async getSupportedCompanies() {
-    try {
-      const response = await wx.request({
-        url: `${getApp().globalData.apiBaseUrl}/api/Express100/companies`,
-        method: 'GET'
-      });
+  getSupportedCompanies() {
+    return new Promise((resolve) => {
+      wx.request({
+        url: buildApiUrl('/Express100/companies'),
+        method: 'GET',
+        success: (res) => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            const payload = res.data || {};
+            const responseData = payload.data !== undefined ? payload.data : payload;
+            const code = payload.code;
+            const isSuccess = code === undefined || code === 0 || code === 200;
 
-      if (response.statusCode === 200) {
-        return {
-          success: true,
-          data: response.data
-        };
-      } else {
-        return {
-          success: false,
-          message: '获取快递公司列表失败'
-        };
-      }
-    } catch (error) {
-      console.error('获取快递公司列表失败:', error);
-      return {
-        success: false,
-        message: '网络错误，请稍后重试'
-      };
-    }
+            if (isSuccess) {
+              resolve({
+                success: true,
+                data: responseData
+              });
+              return;
+            }
+
+            resolve({
+              success: false,
+              message: payload.message || '获取快递公司列表失败',
+              data: responseData
+            });
+            return;
+          }
+
+          resolve({
+            success: false,
+            message: `获取快递公司列表失败(${res.statusCode})`,
+            data: res.data
+          });
+        },
+        fail: (error) => {
+          console.error('获取快递公司列表失败:', error);
+          resolve({
+            success: false,
+            message: '网络错误，请稍后重试',
+            error
+          });
+        }
+      });
+    });
   },
 
   /**

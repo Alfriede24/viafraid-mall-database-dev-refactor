@@ -222,7 +222,7 @@ public class UserOrderController {
     )
     @ApiOperationSupport(author = "zpc")
     public ApiResultResponse<Boolean> removeByIds(@PathVariable @NotNull(message = "ids不能为空") String ids) {
-        if (StrUtil.isNotBlank(ids)) {
+        if (StrUtil.isBlank(ids)) {
                 return ApiResultResponse.error("ID列表不能为空");
         }
         boolean result = userOrderService.removeByIds(Arrays.asList(ids.split(",")));
